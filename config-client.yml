@@ -1,0 +1,6 @@
+# Utilizado para lógica geral de configuração do aplicativo
+spring:
+  cloud:
+    config:
+      allow-override: true  # permite sobrescrever as propriedades do spring cloud em cada micro-serviço
+      override-none: true
