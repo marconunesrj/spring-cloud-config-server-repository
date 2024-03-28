@@ -1,3 +1,6 @@
+server:
+  port: 8181
+
 # Coloca-se aqui todas as configurações que estavam no application.yml do módulo twitter-to-kafka-service e
 #  apaga-se o conteúdo do application.yml do módulo twitter-to-kafka-service
 twitter-to-kafka-service:
@@ -19,6 +22,7 @@ retry-config:
   maxAttempts: 3
   sleep-time-ms: 2000
 
+# Configuração do kafka
 kafka-config:
   # host:port  As mesmas configurações do docker-compose file
   bootstrap-servers: localhost:19092, localhost:29092, localhost:39092
@@ -33,8 +37,9 @@ kafka-config:
   replication-factor: 3
 
 kafka-producer-config:
-  key-serializer-class: org.apache.kafka.common.serialization.LongSerializer
-  value-serializer-class: io.confluent.kafka.serializers.KafkaAvroSerializer
+  # Como iremos ler os dados do topic kafka no producer
+  key-serializer-class: org.apache.kafka.common.serialization.LongSerializer  # Para ler a chave que é Tipo Long
+  value-serializer-class: io.confluent.kafka.serializers.KafkaAvroSerializer  # Para ler o valor que é Tipo Avro, mesmo do consumer
   compression-type: snappy  # Options: gzip, none, lz4 and snappy ( esta é do google)
   # Options: 0, 1, all
   # 0 -> não aguardará e retornará imediatamente sem confirmação,

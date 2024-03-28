@@ -1,0 +1,82 @@
+server:
+  port: 8182
+
+# Configuração do kafka
+kafka-config:
+  # host:port  As mesmas configurações do docker-compose file
+  bootstrap-servers: localhost:19092, localhost:29092, localhost:39092
+  # As mesmas configurações do docker-compose file
+  schema-registry-url-key: schema.registry.url
+  # As mesmas configurações do docker-compose file
+  schema-registry-url: http://localhost:8081
+  topic-name: twitter-topic
+  topic-names-to-create:
+    - twitter-topic
+
+# Propriedades consumidas pela classe KafkaConsumerConfig no módulo: kafka-consumer
+kafka-consumer-config:
+  # Como iremos ler os dados do topic kafka no consumer
+  key-deserializer: org.apache.kafka.common.serialization.LongDeserializer  # Para ler a chave que é Tipo Long
+  value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer  # Para ler o valor que é Tipo Avro, mesmo do producer
+  # Sets a unique id for a consumer to allow using offsets. Garante que não comecemos do início a cada vez,
+  # mas um deslocamento permanece para o último item lido
+  consumer-group-id: twitter-topic-consumer
+  # Redefinição de compensação automática
+  auto-offset-reset: earliest  # mais cedo (Dizemos que queremos começar a ler desde o início de uma partição)
+  # Como trabalhamos com o Tipo Avro, temos que definir esta propriedade do leitor Avro como true no consumer
+  specific-avro-reader-key: specific.avro.reader
+  specific-avro-reader: true
+  # Permite consumir os dados em lotes
+  batch-listener: true
+  # Queremos começar a ouvir do tópico depois de verificar se o tópico já está lá
+  auto-startup: true
+  # Nível de simultaneidade é definido como 3, que é igual ao número de partições e é obrigatório
+  # Sets the number of threads to work on consuming, Ex: 1 topic, 4 partitions -> Set as 4
+  concurrency-level: 3
+  # Tempo limite da sessão:
+  # É para encadeamentos de pulsação e especifica a quantidade de tempo dentro da qual os corretores(brokers)
+  # precisam obter ao menos um sinal de pulsação do consumidor(consumer), caso contrário, marcará o
+  # consumidor como morto. O valor padrão é 10 segundos
+  session-timeout-ms: 10000
+  # Intervalo de pulsação: Especifica a frequência de envio de sinais de pulsação pelo consumidor
+  # Portanto, se for definido como 3 segundos, que é o valor padrão, a cada 3 segundos o consumidor irá enviar
+  # o sinal de pulsação para o corretor(broker)
+  # Recomenda-se aguardar a falta de alguns sinais de heartbeat antes de marcar o consumidor como morto.
+  # É por isso que definimos a pulsação para um terço do tempo limite da sessão, para que ele tente três vezes antes
+  # do tempo limite da sessão antes do timeout.
+  heartbeat-interval-ms: 3000
+  # Intervale máximo de pesquisa:
+  # Esta propriedade é para encadeamentos do usuário. Se a lógica de processamento de mensagens for muito pesada
+  # para causar tempo maior que esse intervalo, o coordenador faz explicitamente com que o consumidor saia
+  # do grupo e também aciona uma nova rodada para reequilibrar.
+  # Este valor deve ser definido de acordo com os requisitos de tempo de processamento.
+  max-poll-interval-ms: 300000
+  # Registros máximos de votação(call):
+  # Esta propriedade define o máximo de registros a serem buscados em cada votação(call)
+  max-poll-records: 500
+  # Máximo de bytes em busca de partição:
+  # Este é o máximo de bytes a serem buscados em cada poll.
+  max-partition-fetch-bytes-default: 1048576
+  #
+  max-partition-fetch-bytes-boost-factor: 1
+  # Tempo limite de pesquisa:
+  # Determina quanto tempo esperamos até que pelo menos um registro esteja disponível.
+  # Ele bloqueará no método de enquete no consumidor kafka e aguardará os novos registros.
+  # Definir esse valor como muito alto bloqueará demais e definir como muito baixo custará a parada da CPU.
+  # Optimize it, having a value around 100ms is recommended
+  # CPU stall: bad CPU utilization - CPU doesn't make progress although it is running
+  poll-timeout-ms: 150
+
+retry-config:
+  initial-interval-ms: 1000
+  max-interval-ms: 10000
+  multiplier: 2.0
+  maxAttempts: 3
+  sleep-time-ms: 2000
+
+elastic-config:
+  index-name: twitter-index
+  connection-url: http://localhost:9200
+  connect-timeout-ms: 5000
+  socket-timeout-ms: 30000
+  is-repository: true
