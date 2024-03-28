@@ -29,7 +29,8 @@ kafka-consumer-config:
   # Permite consumir os dados em lotes
   batch-listener: true
   # Queremos começar a ouvir do tópico depois de verificar se o tópico já está lá
-  auto-startup: true
+  # Colocado como false, pois estamos inicializando via código no método onAppStarted da classe TwitterKafkaConsumer
+  auto-startup: false
   # Nível de simultaneidade é definido como 3, que é igual ao número de partições e é obrigatório
   # Sets the number of threads to work on consuming, Ex: 1 topic, 4 partitions -> Set as 4
   concurrency-level: 3
