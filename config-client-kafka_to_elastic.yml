@@ -68,6 +68,7 @@ kafka-consumer-config:
   # CPU stall: bad CPU utilization - CPU doesn't make progress although it is running
   poll-timeout-ms: 150
 
+# Estas propriedades serão lidas pela classe RetryConfigData no módulo: app-config-data
 retry-config:
   initial-interval-ms: 1000
   max-interval-ms: 10000
@@ -75,9 +76,10 @@ retry-config:
   maxAttempts: 3
   sleep-time-ms: 2000
 
+# Estas propriedades serão lidas pela classe ElasticConfigData no módulo: app-config-data
 elastic-config:
-  index-name: twitter-index
-  connection-url: http://localhost:9200
+  index-name: twitter-index  # Nome do index a ser utilizado
+  connection-url: http://localhost:9200  # URL de conexão com a porta
   connect-timeout-ms: 5000
   socket-timeout-ms: 30000
   is-repository: true

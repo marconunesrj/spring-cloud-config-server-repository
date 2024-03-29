@@ -15,6 +15,7 @@ twitter-to-kafka-service:
   mock-max-tweet-length: 15
   mock-sleep-ms: 10000
 
+# Estas propriedades serão lidas pela classe RetryConfigData no módulo: app-config-data
 retry-config:
   initial-interval-ms: 1000
   max-interval-ms: 10000
