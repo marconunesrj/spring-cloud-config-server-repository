@@ -4,11 +4,14 @@ elastic-query-service:
 server:
   port: 8183
   servlet:
+    # Propriedade necessária para definir um caminho de contexto para um aplicativo da web
     context-path: /elastic-query-service
 
+# Estas propriedades serão lidas pela classe ElasticQueryConfigData do módulo: app-config-data
 elastic-query-config:
-  text-field: text
+  text-field: text  # propriedade da classe TwitterIndexModel do módulo: elastic-model
 
+# Estas propriedades serão lidas pela classe ElasticConfigData no módulo: app-config-data
 elastic-config:
   index-name: twitter-index
   connection-url: http://localhost:9200
