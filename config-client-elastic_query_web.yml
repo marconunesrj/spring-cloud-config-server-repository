@@ -13,6 +13,7 @@ elastic-query-web-client:
     accept-type: 'application/vnd.api.v1+json'   # Versionamento
     base-url: 'http://elastic-query-service/elastic-query-service/documents'
     service-id: elastic-query-service
+    # Lista de ids, host e port para o loadBalancer, veja classe ElasticQueryServiceInstanceListSupplierConfig
     instances:
       -
         id: elastic-query-service-1
