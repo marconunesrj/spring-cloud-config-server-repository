@@ -1,22 +1,29 @@
 elastic-query-service:
+  # Definindo um atraso de pressão de returno como 500 milissegundos para ajudar a adicionar
+  # um atraso para cada gravação e devolvê-lo em partes para o cliente.
   backPressure-delay-ms: 500
 
+# Estas propriedades serão lidas pela classe ElasticConfigData no módulo: app-config-data
 elastic-config:
-  index-name: twitter-index
-  connection-url: http://localhost:9200
+  index-name: twitter-index  # Nome do index a ser utilizado
+  connection-url: http://localhost:9200  # URL de conexão com a porta
   connect-timeout-ms: 5000
   socket-timeout-ms: 30000
 
+# Estas propriedades serão lidas pela classe ElasticQueryConfigData do módulo: app-config-data
 elastic-query-config:
-  text-field: text
+  text-field: text  # propriedade da classe TwitterIndexModel do módulo: elastic-model
 
+# Configuração do kafka
 kafka-config:
   topic-name: twitter-analytics-topic-2
   topic-names-to-create:
     - twitter-analytics-topic-2
   num-partitions: 3
   replication-factor: 3
+  # host:port  As mesmas configurações do docker-compose file
   bootstrap-servers: localhost:19092, localhost:29092, localhost:39092
+  # As mesmas configurações do docker-compose file
   schema-registry-servers: http://localhost:8081
   sleep-time-ms: 1000
   max-interval-ms: 10000
@@ -29,10 +36,10 @@ server:
 spring:
   webflux:
     base-path: /reactive-elastic-query-service
-  codec:
+  codec:  # Usando codec para definir o tamanho máximo da memória
     max-in-memory-size: 25MB
   data:
     elasticsearch:
       client:
         reactive:
-          max-in-memory-size: 25MB
+          max-in-memory-size: 25MB  # Definir o tamanho máximo da memória do elasticsearch client reactive
