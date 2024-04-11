@@ -1,11 +1,52 @@
 elastic-query-service:
   version: v1
+  # Criado no console do keycloak como clients, utilizado na classe AudienceValidator
+  # através da classe ElasticQueryServiceConfigData
+  custom-audience: elastic-query-service
 
 server:
   port: 8183
   servlet:
     # Propriedade necessária para definir um caminho de contexto para um aplicativo da web
     context-path: /elastic-query-service
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # As uris abaixo devem ser visualizadas no Postman rodando "OpenID Endpoint Configuration" ou
+          # pelo console admin do keycloak para o realm criado em "Realm settings", "Endpoints": "OpenID Endpoint Configuration"
+          issuer-uri: http://localhost:9091/realms/microservices-realm
+          jwk-set-uri: http://localhost:9091/realms/microservices-realm/protocol/openid-connect/certs
+  jpa:
+    # Colocado false, pois é true por padrão, o que causa o contexto de persistência para ficar aberto,
+    # o que não é bom para o desempenho.
+    open-in-view: false
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+  datasource:
+    # Abaixo é um exemplo caso o banco de dados não esteja no docker
+    # Utilizando o Schema: public,
+    # binaryTransfer: true para melhor desempenho e
+    # reWriteBatchedInserts: true para inserções em lote no banco de dados, que executará todas as instruções
+    #   de inserção enviadas ao PostgreSql em lotes, desde que estejam na mesma transação
+#    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=public&binaryTransfer=true&reWriteBatchedInserts=true
+    # keycloak_postgres -> nome do serviço do banco de dados postgres utilizado no keycloak
+    url: jdbc:postgresql://keycloak_postgres:5432/postgres?currentSchema=public&binaryTransfer=true&reWriteBatchedInserts=true
+    username: postgres
+#    password: '{cipher}d4af18fcab2f5ece79a7b41f36066be102deb3cae3394854edfdf490b2e42d12'
+    password: '{cipher}4d0c8fffa9106d0c7075ed0f8e04f1abb2fb092e899ddb88f5fe06e7074b2dd4'
+    driver-class-name: org.postgresql.Driver
+    # https://docs.spring.io/spring-boot/docs/1.2.0.M1/reference/html/howto-database-initialization.html
+    # set it to the vendor name of the database (hsqldb, h2, oracle, mysql, postgresql etc.)
+    platform: postgres
+    schema: classpath:init-schema.sql  # classpath -> /src/main/resources
+    data: classpath:init-data.sql
+    initialization-mode: always  # Colocado para executar os arquivos .sql toda vez que o aplicativo inicializar (apenas para demonstração)
 
 # Estas propriedades serão lidas pela classe ElasticQueryConfigData do módulo: app-config-data
 elastic-query-config:
