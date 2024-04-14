@@ -50,7 +50,7 @@ spring:
             issuer-uri: http://localhost:9091/realms/microservices-realm
 #            issuer-uri: http://keycloak-authorization-server:9091/realms/microservices-realm
 #            issuerUri: http://localhost:8081/auth/realms/microservices-realm
-            user-name-attribute: preferred_username
+#            user-name-attribute: preferred_username
 
 
 security:

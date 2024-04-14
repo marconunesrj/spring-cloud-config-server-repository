@@ -48,15 +48,21 @@ spring:
             # registrationId -> vem de security.default-client-registration-id definido abaixo
             redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
             scope: openid
-        provider:
-          # https://www.baeldung.com/spring-boot-keycloak
-          keycloak:
-            # As uris abaixo devem ser visualizadas no Postman rodando "OpenID Endpoint Configuration" ou
-            # pelo console admin do keycloak para o realm criado em "Realm settings", "Endpoints": "OpenID Endpoint Configuration"
-            issuer-uri: http://localhost:9091/realms/microservices-realm
-#            issuer-uri: http://keycloak-authorization-server:9091/realms/microservices-realm
-#            issuerUri: http://localhost:8081/auth/realms/microservices-realm
-            user-name-attribute: preferred_username
+#        provider:
+#          # https://www.baeldung.com/spring-boot-keycloak
+#          keycloak:
+#            # As uris abaixo devem ser visualizadas no Postman rodando "OpenID Endpoint Configuration" ou
+#            # pelo console admin do keycloak para o realm criado em "Realm settings", "Endpoints": "OpenID Endpoint Configuration"
+#            issuer-uri: http://localhost:9091/realms/microservices-realm
+##            issuer-uri: http://keycloak-authorization-server:9091/realms/microservices-realm
+##            issuerUri: http://localhost:8081/auth/realms/microservices-realm
+##            user-name-attribute: preferred_username
+      resourceserver:
+        jwt:
+          # As uris abaixo devem ser visualizadas no Postman rodando "OpenID Endpoint Configuration" ou
+          # pelo console admin do keycloak para o realm criado em "Realm settings", "Endpoints": "OpenID Endpoint Configuration"
+          issuer-uri: http://localhost:9091/realms/microservices-realm
+          jwk-set-uri: http://localhost:9091/realms/microservices-realm/protocol/openid-connect/certs
 
 security:
   # Pegar no console admin do keycloak "Clients", "Settings", "Home URL"
