@@ -17,8 +17,8 @@ spring:
         jwt:
           # As uris abaixo devem ser visualizadas no Postman rodando "OpenID Endpoint Configuration" ou
           # pelo console admin do keycloak para o realm criado em "Realm settings", "Endpoints": "OpenID Endpoint Configuration"
-          issuer-uri: http://localhost:9091/auth/realms/microservices-realm
-          jwk-set-uri: http://localhost:9091/auth/realms/microservices-realm/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8081/auth/realms/microservices-realm
+          jwk-set-uri: http://localhost:8081/auth/realms/microservices-realm/protocol/openid-connect/certs
   jpa:
     # Colocado false, pois é true por padrão, o que causa o contexto de persistência para ficar aberto,
     # o que não é bom para o desempenho.
