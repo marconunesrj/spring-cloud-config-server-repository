@@ -47,7 +47,7 @@ spring:
           keycloak:
             # As uris abaixo devem ser visualizadas no Postman rodando "OpenID Endpoint Configuration" ou
             # pelo console admin do keycloak para o realm criado em "Realm settings", "Endpoints": "OpenID Endpoint Configuration"
-            issuer-uri: http://localhost:9091/realms/microservices-realm
+            issuer-uri: http://localhost:9091/auth/realms/microservices-realm
 #            issuer-uri: http://keycloak-authorization-server:9091/realms/microservices-realm
 #            issuerUri: http://localhost:8081/auth/realms/microservices-realm
 #            user-name-attribute: preferred_username
