@@ -40,7 +40,7 @@ spring:
           keycloak:
             client-id: 'elastic-query-web-client'
             # Pegar a secret no console admin do keycloak e transformar no Postman request "Encrypt Password"
-            client-secret: '{cipher}d8ccf1ceac5c4f9d48255b071aff2934d46a5c427b17a42333ffbafeb99e99c56603b9731c5f1eff78e441bae07480b5ce6a2e4ab7dc71b3f47692ea6d318f9c'
+            client-secret: '{cipher}0725b160fa1c0b44540fd74ebd8f25383ee7e7ba99cf5d37f327e7abf066c24e35d6102d1e4cdd0c73f30bd6d40c8bbea49df3ef044194d68a042486541df74a'
             authorization-grant-type: authorization_code
             # Pegar no console admin do keycloak "Clients", "Settings", "Valid redirect URIs" login/oauth2/code
             # baseUrl -> vem de elastic-query-web-client.webclient.base-url definido acima
