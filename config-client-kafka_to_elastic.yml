@@ -29,8 +29,7 @@ kafka-consumer-config:
   # Permite consumir os dados em lotes
   batch-listener: true
   # Queremos começar a ouvir do tópico depois de verificar se o tópico já está lá
-  # Colocado como false, pois estamos inicializando via código no método onAppStarted da classe TwitterKafkaConsumer
-  auto-startup: false
+  auto-startup: true
   # Nível de simultaneidade é definido como 3, que é igual ao número de partições e é obrigatório
   # Sets the number of threads to work on consuming, Ex: 1 topic, 4 partitions -> Set as 4
   concurrency-level: 3
@@ -58,7 +57,6 @@ kafka-consumer-config:
   # Máximo de bytes em busca de partição:
   # Este é o máximo de bytes a serem buscados em cada poll.
   max-partition-fetch-bytes-default: 1048576
-  #
   max-partition-fetch-bytes-boost-factor: 1
   # Tempo limite de pesquisa:
   # Determina quanto tempo esperamos até que pelo menos um registro esteja disponível.
