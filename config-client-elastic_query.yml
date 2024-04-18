@@ -29,6 +29,7 @@ spring:
         jwt:
           # As uris abaixo devem ser visualizadas no Postman rodando "OpenID Endpoint Configuration" ou
           # pelo console admin do keycloak para o realm criado em "Realm settings", "Endpoints": "OpenID Endpoint Configuration"
+          # https://www.baeldung.com/postman-keycloak-endpoints
           issuer-uri: http://localhost:9091/auth/realms/microservices-realm
           jwk-set-uri: http://localhost:9091/auth/realms/microservices-realm/protocol/openid-connect/certs
       client:
