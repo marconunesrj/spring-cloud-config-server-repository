@@ -38,7 +38,7 @@ spring:
             client-id: 'elastic-query-web-client-2'
             # Pegar a secret no console admin do keycloak e transformar no Postman request "Encrypt Password"
 #            client-secret: '{cipher}54b4326e9052bb75781ae965fb9e309ce50b35d7ec421a8a4a0d13b1705b38118d0e44b3356601c1f00dc055782eb8b8f9378410871a1ea4cbb6ac41ea4b8c1c'
-            client-secret: '{cipher}4d39151e541b60aa8198d81bb593feff616bdc14e202a58b09525201c3c1daabaaaf10161e0f16699ba76b8b823a1b588164ba2725ae310e51f757c7c6658820'
+            client-secret: '{cipher}6e22eeae25477a748a3391c26dacd1826a77fef039f80a692f68f0f20c68844556d2b26cb2aceaf71e322e2d09f630e458d0942577e44334b8a402d509cd45a3'
             authorization-grant-type: authorization_code
             # Pegar no console admin do keycloak "Clients", "Settings", "Valid redirect URIs" login/oauth2/code
             redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
