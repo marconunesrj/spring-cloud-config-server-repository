@@ -24,6 +24,7 @@ springdoc:
 security:
   paths-to-ignore: /api-docs
 
+# Usaremos o cliente admin kafka onde precisamos repetir a configuração e nós
 retry-config:
   initial-interval-ms: 1000
   max-interval-ms: 10000
