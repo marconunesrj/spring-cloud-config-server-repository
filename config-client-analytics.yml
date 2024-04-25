@@ -1,0 +1,91 @@
+server:
+  port: 8188
+  servlet:
+    context-path: /analytics-service
+
+# Propriedades lidas na classe AnalyticsServiceConfigData
+analytics-service:
+  version: v2
+  custom-audience: analytics-service
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9091/auth/realms/microservices-realm
+          jwk-set-uri: http://localhost:9091/auth/realms/microservices-realm/protocol/openid-connect/certs
+  jpa:
+    open-in-view: false
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+        use_sql_comments: false
+        format_sql: true
+        # Isso significa que iremos agrupar os registros em 50 antes de enviá-los ao banco de dados
+        jdbc.batch_size: 50
+        # Configurando o hibernate para colocar inserções e atualizações em ordem separadamente para poder usar lotes
+        order_inserts: true
+        order_updates: true
+  datasource:
+    # Abaixo é um exemplo caso o banco de dados não esteja no docker
+    # Utilizando o Schema: analytics, criado e setado como padrão no arquivo init-schema.sql
+    # binaryTransfer: true para melhor desempenho e
+    # reWriteBatchedInserts: true para inserções em lote no banco de dados, que executará todas as instruções
+    #   de inserção enviadas ao PostgreSql em lotes, desde que estejam na mesma transação
+#    url: jdbc:postgresql://localhost:5440/postgres?currentSchema=analytics&binaryTransfer=true&reWriteBatchedInserts=true
+    url: jdbc:postgresql://localhost:5440/postgres&binaryTransfer=true&reWriteBatchedInserts=true
+    username: postgres
+    password: '{cipher}4b5e4d55c2ccc0509837c7ee268af738d6d4f08a4268ecaadcb9b7e7244f19f8'
+    driver-class-name: org.postgresql.Driver
+    platform: postgres
+    schema: classpath:init-schema.sql  # classpath -> /src/main/resources
+    initialization-mode: always  # Colocado para executar os arquivos .sql toda vez que o aplicativo inicializar (apenas para demonstração)
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+# Propriedades lidas na classe WebSecurityConfig
+security:
+  paths-to-ignore: /api-docs
+
+# Propriedades lidas na classe KafkaConfigData
+kafka-config:
+  bootstrap-servers: localhost:19092, localhost:29092, localhost:39092
+  schema-registry-url-key: schema.registry.url
+  schema-registry-url: http://localhost:8081
+  topic-name: twitter-analytics-topic
+  topic-names-to-create:
+    - twitter-analytics-topic
+
+# Propriedades lidas na classe KafkaConsumerConfigData
+kafka-consumer-config:
+  key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+  consumer-group-id: twitter-topic-consumer
+  auto-offset-reset: earliest
+  specific-avro-reader-key: specific.avro.reader
+  specific-avro-reader: true
+  batch-listener: true
+  auto-startup: false
+  concurrency-level: 3
+  session-timeout-ms: 10000
+  heartbeat-interval-ms: 3000
+  max-poll-interval-ms: 300000
+  max-poll-records: 500
+  max-partition-fetch-bytes-default: 1048576
+  max-partition-fetch-bytes-boost-factor: 1
+  poll-timeout-ms: 150
+
+# Propriedades lidas na classe RetryConfigData
+retry-config:
+  initial-interval-ms: 1000
+  max-interval-ms: 10000
+  multiplier: 2.0
+  maxAttempts: 3
+  sleep-time-ms: 2000
