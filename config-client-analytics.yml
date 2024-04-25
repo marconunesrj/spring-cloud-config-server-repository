@@ -35,8 +35,8 @@ spring:
     # binaryTransfer: true para melhor desempenho e
     # reWriteBatchedInserts: true para inserções em lote no banco de dados, que executará todas as instruções
     #   de inserção enviadas ao PostgreSql em lotes, desde que estejam na mesma transação
-#    url: jdbc:postgresql://localhost:5440/postgres?currentSchema=analytics&binaryTransfer=true&reWriteBatchedInserts=true
-    url: jdbc:postgresql://localhost:5440/postgres&binaryTransfer=true&reWriteBatchedInserts=true
+    url: jdbc:postgresql://localhost:5440/postgres?currentSchema=analytics&binaryTransfer=true&reWriteBatchedInserts=true
+#    url: jdbc:postgresql://localhost:5440/postgres&binaryTransfer=true&reWriteBatchedInserts=true
     username: postgres
     password: '{cipher}4b5e4d55c2ccc0509837c7ee268af738d6d4f08a4268ecaadcb9b7e7244f19f8'
     driver-class-name: org.postgresql.Driver
