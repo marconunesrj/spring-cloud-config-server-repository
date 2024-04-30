@@ -29,6 +29,10 @@ elastic-query-web-client:
     accept: ${elastic-query-web-client.webclient.accept-type}
 
 spring:
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
   thymeleaf:
     # Definido como false para permitir que os modelos thymeleaf sejam carregados quando
     # eles são alterados durante o desenvolvimento
