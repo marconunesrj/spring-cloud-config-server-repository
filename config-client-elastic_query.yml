@@ -14,11 +14,17 @@ elastic-query-service:
     query-type: 'ANALYTICS_DATABASE'
   query-from-kafka-state-store:
     method: GET
-    uri: "http://localhost:8187/kafka-streams-service/get-word-count-by-word/{word}"
+    # Alterado os valores de URI de serviço analítico de localhost para nomes de host.
+    # Porque, com o serviço de descoberta (discovery-service) agora precisamos usar nomes de serviço,
+    # e o serviço de descoberta fará o balanceamento de carga, observando o nome do serviço e,
+    # em seguida, encaminhará a solicitação para o serviço com o mesmo nome e portas diferentes.
+    uri: "http://kafka-streams-service/kafka-streams-service/get-word-count-by-word/{word}"
+#    uri: "http://localhost:8187/kafka-streams-service/get-word-count-by-word/{word}"
     accept: ${elastic-query-service.webclient.accept-type}
   query-from-analytics-database:
     method: GET
-    uri: "http://localhost:8188/analytics-service/get-word-count-by-word/{word}"
+    uri: "http://analytics-service/analytics-service/get-word-count-by-word/{word}"
+#    uri: "http://localhost:8188/analytics-service/get-word-count-by-word/{word}"
     accept: ${elastic-query-service.webclient.accept-type}
 
 server:
@@ -31,6 +37,7 @@ spring:
   cloud:
     loadbalancer:
       ribbon:
+        # Definido como false para trabalhar com o Balanceador de carga de nuvem do Spring.
         enabled: false
   security:
     oauth2:

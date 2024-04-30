@@ -12,16 +12,19 @@ elastic-query-web-client:
     content-type: 'application/vnd.api.v1+json'
     accept-type: 'application/vnd.api.v1+json'
     base-url: 'http://elastic-query-service/elastic-query-service/documents'
-    service-id: elastic-query-service
-    # Lista de ids, host e port para o loadBalancer, veja classe ElasticQueryServiceInstanceListSupplierConfig
-    instances:
-      -
-        id: elastic-query-service-1
-        host: localhost
-        port: 8183
-      - id: elastic-query-service-1
-        host: localhost
-        port: 8186
+# Não serão mais utilizadas, pois utilizaremos o discovery-service
+#    service-id: elastic-query-service
+#    # Lista de ids, host e port para o loadBalancer, veja classe ElasticQueryServiceInstanceListSupplierConfig
+#    instances:
+#      -
+#        id: elastic-query-service-1
+#        host: localhost
+#        port: 8183
+#      -
+#        id: elastic-query-service-2
+#        host: localhost
+#        port: 8186
+################
   query-by-text:
     method: POST
     uri: "/get-document-by-text"
@@ -31,6 +34,7 @@ spring:
   cloud:
     loadbalancer:
       ribbon:
+        # Definido como false para trabalhar com o Balanceador de carga de nuvem do Spring.
         enabled: false
   thymeleaf:
     cache: false

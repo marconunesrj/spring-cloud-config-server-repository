@@ -11,6 +11,7 @@ spring:
   cloud:
     loadbalancer:
       ribbon:
+        # Definido como false para trabalhar com o Balanceador de carga de nuvem do Spring.
         enabled: false
   security:
     oauth2:
