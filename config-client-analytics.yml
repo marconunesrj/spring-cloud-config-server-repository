@@ -56,7 +56,20 @@ springdoc:
 
 # Propriedades lidas na classe WebSecurityConfig
 security:
-  paths-to-ignore: /api-docs
+  paths-to-ignore: /api-docs, /actuator/**
+
+# Utilizado para o monitoramento
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure.include: health, prometheus
+      path-mapping.prometheus: metrics
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      cache.time-to-live: 1ms
 
 # Propriedades lidas na classe KafkaConfigData
 kafka-config:

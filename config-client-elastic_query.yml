@@ -113,4 +113,17 @@ springdoc:
 
 # Estas propriedades serão lidas pela classe WebSecurityConfig no módulo: elastic-query-service
 security:
-  paths-to-ignore: /api-docs
+  paths-to-ignore: /api-docs, /actuator/**
+
+# Utilizado para o monitoramento
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure.include: health, prometheus
+      path-mapping.prometheus: metrics
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      cache.time-to-live: 1ms
