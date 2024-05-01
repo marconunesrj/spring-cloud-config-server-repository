@@ -1,0 +1,128 @@
+# Aqui definimos o limite da taxa de falha para 50%. Em seguida, definimos o tamanho da janela deslizante
+# como 10. Portanto para cada 10 registros, se mais de 50% do tempo limite e o circuito forem abertos e
+# os pedidos será enviado do fallback. E durante o estado aberto, ele aguardará um tempo configurado
+# com wait-duration-in-open-state (tempo de espera de duração em estado aberto).
+# Após este tempo, o estado será alterado para meio aberto, o que significa que as solicitações recebidas
+# começam a processar novamente. Mas também limitamos o número de solicitações permitidas em estado meio aberto
+# aqui, e ele verificará a porcentagem no estado semi-aberto novamente para decidir abrir ou fechar
+# o circuito.
+gateway-service:
+  timeout-ms: 3000
+  # taxa de falha limite. Quando a taxa de falha for maior ou igual a este valor,
+  # o circuito abre e começa a entrar em curto-circuito. O padrão é 50.
+  failure-rate-threshold: 50
+  # taxa de chamada lenta, quando a taxa de chamada lenta for maior ou igual a este valor,
+  # o circuito abre e entra em curto-circuito. Este padrão é 100.
+  slow-call-rate-threshold: 50
+  # limite de duração de chamada lenta é o limite de duração acima do qual as chamadas são consideradas como lento.
+  # Este padrão é de 60.000 milissegundos.
+  slow-call-duration-threshold: 50
+  # número permitido de chamadas no estado half_open é o número permitido de chamadas no estado half_open.
+  permitted-num-of-calls-in-half-open-state: 10
+  # maxWaitDurationInHalfOpenState: Max. wait duration that CircuitBreaker can wait In HALF_OPEN state. Defaults 0,
+  #  means would wait infinitely
+  #
+  # slidingWindowType: Type of sliding window used to record the outcome or calls when CircuitBreaker is closed.
+  #  Defaults to COUNT_BASED, it can also be TIME_BASED.
+  #
+  # sliding-window-size: Size of sliding window used to record the outcome or calls when CircuitBreaker is closed.
+  #  Defaults to 100
+  sliding-window-size: 10
+  # Min. number of calls required per sliding window period, before the failure or slow rate calculated
+  min-number-of-calls: 10
+  # The time that CircuitBreaker should wait before switching to OPEN to HALF_OPEN
+  wait-duration-in-open-state: 60000
+
+server:
+  port: 9090
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    loadbalancer:
+      ribbon:
+        # Definido como false para trabalhar com o Balanceador de carga de nuvem do Spring.
+        enabled: false
+    gateway:
+      discovery:
+        locator:
+          # enabled: false -> porque queremos personalizar as definições de rota aqui na configuração,
+          # em vez de obtê-las da descoberta como pré-configurado. Porque, por padrão, o localizador
+          # de descoberta adiciona as rotas com o nome, começando com reactive_composite_discovery_client,
+          # portanto, nossas rotas explícitas serão substituídas e omitidas se o localizador de descoberta
+          # estiver ativado.
+          enabled: false
+          lowerCaseServiceId: true
+      routes:
+        - id: elastic-query-service
+          uri: lb://elastic-query-service
+          # Para predicates, usamos elastic-query-service e coringas para corresponder a todos
+          # os caminhos, que começam com elastic-query-service.
+          predicates:
+            - Path=/elastic-query-service/**
+
+          # RewritePath -> reescrevemos o caminho para obter apenas a última parte, que é a parte
+          # que vem com ** (coringa). Portanto, removemos o caminho de contexto dos serviços para
+          # simplificar a URL.
+
+          # RequestRateLimiter -> Definimos o filtro RequestRateLimiter aqui, onde o limitador
+          # de taxa usa o algoritmo Token bucket, que preencherá os tokens em cada segundo e
+          # gastá-los, quando o usuário solicitar.
+
+          # CircuitBreaker -> retornará um resultado de fallback usando um fallback
+          # controller (forward:/fallback/query-fallback) caso um serviço não esteja acessível.
+          filters:
+            - RewritePath=/elastic-query-service/(?<path>.*), /$\{path}
+            - name: RequestRateLimiter
+              args:
+                # limitará as solicitações por segundo a 5, ou seja, o cliente pode enviar
+                # apenas 5 solicitações por segundo sem descartar as solicitações. Este valor
+                # é usado para preencher o token no algoritmo.
+                redis-rate-limiter.replenishRate: 5
+                # Dará um burst (brecha) temporário para o cliente. Por exemplo, se o cliente
+                # enviar 10 solicitações, isso será permitido, embora definimos um limite de 5
+                # por segundo. Mas, neste caso, o cliente não poderá enviar até 2 segundos porque
+                # já usou os tokens reservados que poderiam ter sido gastos em 2 segundos.
+                redis-rate-limiter.burstCapacity: 10
+                # authHeaderResolver -> Bean criado na classe GatewayConfig
+                # Especificamos o bean de resolução de chave com uma expressão spring.
+                key-resolver: "#{@authHeaderResolver}"
+            - name: CircuitBreaker
+              args:
+                name: queryServiceCircuitBreaker
+                fallbackUri: forward:/fallback/query-fallback
+        - id: analytics-service
+          uri: lb://analytics-service
+          predicates:
+            - Path=/analytics-service/**
+          filters:
+            - RewritePath=/analytics-service/(?<path>.*), /$\{path}
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 5
+                redis-rate-limiter.burstCapacity: 10
+                key-resolver: "#{@authHeaderResolver}"
+            - name: CircuitBreaker
+              args:
+                name: analyticsServiceCircuitBreaker
+                fallbackUri: forward:/fallback/analytics-fallback
+        - id: kafka-streams-service
+          uri: lb://kafka-streams-service
+          predicates:
+            - Path=/kafka-streams-service/**
+          filters:
+            - RewritePath=/kafka-streams-service/(?<path>.*), /$\{path}
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 5
+                redis-rate-limiter.burstCapacity: 10
+                key-resolver: "#{@authHeaderResolver}"
+            - name: CircuitBreaker
+              args:
+                name: streamsServiceCircuitBreaker
+                fallbackUri: forward:/fallback/streams-fallback
+  # Definimos o host redis como localhost aqui para ser usado na limitação de taxa.
+  redis:
+    host: 127.0.0.1
+    port: 6379
